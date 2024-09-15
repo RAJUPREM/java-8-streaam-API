@@ -2,9 +2,11 @@ package NewStreamPractice;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PraStreamApi {
 	
@@ -100,25 +102,25 @@ public class PraStreamApi {
 			
 		}).forEach(i->System.out.println(i));
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------How many male and female employees are there--------------------");
 		
 		Map<String,Long> mgender=lemployees.stream().collect(Collectors.groupingBy(Employee::getEmployeeGender,Collectors.counting()));
 		mgender.entrySet().stream().forEach(System.out::println);
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------Print the name of all roles-------------------------------------");
 		
 		lemployees.stream().map(emp->emp.getEmployeeRole()).forEach(i->System.out.println(i));
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------Print the name of all unique roles------------------------------");
 		
 		lemployees.stream().map(emp->emp.getEmployeeRole()).distinct().forEach(i->System.out.println(i));
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------The average age of maleand female employees---------------------");
 		
 		Map<String,Double> ma=lemployees.stream().collect(Collectors.groupingBy(Employee::getEmployeeGender,Collectors.averagingInt(Employee::getEmployeeAge)));
 		ma.entrySet().stream().forEach(System.out::println);
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------Highest paid employee-------------------------------------------");
 		
 		Employee e=lemployees.stream().sorted(Comparator.comparing(Employee::getEmployeeSalary).reversed()).findFirst().get();
 		System.out.println(e);
@@ -126,37 +128,37 @@ public class PraStreamApi {
 		Employee eAnother=lemployees.stream().collect(Collectors.maxBy(Comparator.comparing(Employee::getEmployeeSalary))).get();
 		System.out.println(eAnother);
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------Get the namesof all the employees who has joined after 2023------");
 		
 		List<String> lempAfter=lemployees.stream().filter(emp->emp.getEmployeeJoined()>2023).map(emp->emp.getEmployeeName()).collect(Collectors.toList());
 		lempAfter.forEach(System.out::println);
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------Count thenumber of employees in each role------------------------");
 		
 		Map<String,Long> mr=lemployees.stream().collect(Collectors.groupingBy(Employee::getEmployeeRole,Collectors.counting()));
 		mr.entrySet().stream().forEach(System.out::println);
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------What is the average salary of each department--------------------");
 		
 		Map<String,Double> mas=lemployees.stream().collect(Collectors.groupingBy(Employee::getEmployeeRole,Collectors.averagingDouble(Employee::getEmployeeSalary)));
 		mas.entrySet().stream().forEach(i->System.out.println(i));
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------The youngest male employee in the role---------------------------");
 		
 		Employee eyme=lemployees.stream().filter(emp->emp.getEmployeeGender().equals("Male")).sorted((emp1,emp2)->emp1.getEmployeeAge()-emp2.getEmployeeAge()).findFirst().get();
 		System.out.println(eyme);
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------How many male and female employees are there in the Go Lang Engineer---");
 		
 		Map<String,Long> mg=lemployees.stream().filter(emp->emp.getEmployeeRole().equals("Go Lang Engineer")).collect(Collectors.groupingBy(Employee::getEmployeeGender,Collectors.counting()));
 		mg.entrySet().stream().forEach(System.out::println);
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------The average salary of male and female-----------------------------");
 		
 		Map<String,Double> mss=lemployees.stream().collect(Collectors.groupingBy(Employee::getEmployeeGender,Collectors.averagingDouble(Employee::getEmployeeSalary)));
 		mss.entrySet().stream().forEach(System.out::println);
 		
-		System.out.println("-------------------------------------------------------------------------------------------");
+		System.out.println("---------------------------List down the names of all employees in each role-----------------");
 		
 		Map<String,List<Employee>> mnr=lemployees.stream().collect(Collectors.groupingBy(Employee::getEmployeeRole,Collectors.toList()));
 		for(Map.Entry<String,List<Employee>> temp:mnr.entrySet())
@@ -164,8 +166,61 @@ public class PraStreamApi {
 			System.out.println(temp.getKey()+" - "+temp.getValue());
 		}
 		
+		System.out.println("----------------------------Separate the employees who are younger to 25years fromthose employees who are older than 25 years---");
+		
+		Map<Boolean,List<Employee>> mat=lemployees.stream().collect(Collectors.partitioningBy(emp->emp.getEmployeeAge()>=25));
+		mat.entrySet().stream().forEach(System.out::println);
+		
+		System.out.println("----------------------------Word having highest length----------------------------------------");
+		
+		String s1="I am learning Stream API in Java";
+		String s1o1=Stream.of(s1.split(" ")).sorted((i1,i2)->i2.length()-i1.length()).findAny().get();
+		System.out.println(s1o1);
+		String s1o2=Stream.of(s1.split(" ")).sorted(Comparator.comparing(String::length).reversed()).findFirst().get();
+		System.out.println(s1o2);
+		
+		System.out.println("----------------------------Remove the duplicates fromthe string------------------------------");
+		
+		String s2="dabcadefg";
+		Stream.of(s2.split("")).distinct().forEach(System.out::println);
+		
+		System.out.println("----------------------------Find the word that has 2nd highest length-------------------------");
+		
+		String s3="I am learning Streams API in Java";
+		String s3o1=Stream.of(s3.split(" ")).sorted((i1,i2)->{
+			if(i1.length()>i2.length())
+			{
+				return -1;
+			}
+			else
+			{
+				return 1;
+			}
+		}).skip(1).findFirst().get();
+		System.out.println(s3o1);
+		
+		System.out.println("-----------------------------Frequency of words------------------------------------------------");
+		
+		String s4="I am learning Streams API in Java Java";
+		Map<String,Long> s4list=Stream.of(s4.split(" ")).collect(Collectors.groupingBy(i->i,Collectors.counting()));
+		s4list.entrySet().stream().map(i->i.getKey()+"="+i.getValue()).forEach(i->System.out.println(i));
+		
 		System.out.println("-------------------------------------------------------------------------------------------");
 		
+		Map<Character,Integer> mex=new LinkedHashMap<Character,Integer>();
+		mex.put('A',20);
+		mex.put('E',10);
+		mex.put('B',200);
+		mex.put('D',240);
+		mex.put('C',30);
+		
+		mex.entrySet().stream().map(i->i.getValue()).sorted().forEach(System.out::println);
+		
+		
+		System.out.println("-------------------------------------------------------------------------------------------");
+		
+		
+		System.out.println("-------------------------------------------------------------------------------------------");
 		
 		
 		System.out.println("-------------------------------------------------------------------------------------------");
